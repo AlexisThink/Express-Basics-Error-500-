@@ -1,9 +1,7 @@
 /* Import the modules. */
 const express = require('express');
-const morgan = require('morgan')
-
-/* Absolute Path to HTML file. */
-const indexFile = `${ __dirname }/index.html`;
+const morgan = require('morgan');
+const api = require('./public/routes/api');
 
 /**
  * [1] Create and instantiate the Node server.
@@ -13,13 +11,22 @@ const indexFile = `${ __dirname }/index.html`;
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.set('views', __dirname + '/src/views');
+app.set('view engine', 'pug');
 //MILDDWARE
 app.use(morgan('dev'));
+app.use('/static', express.static('public'));
+
 
 //ROUTES
 app.get('/', (request, response) => {
-  response.sendFile(indexFile);
+  response.render('main', {
+    title: 'LinkedIn REST API',
+    subtitle: 'API Reference'
+  })
 });
+
+app.use('/api/v1/', api)
 
 //404
 app.use((request, response) =>{
@@ -32,7 +39,7 @@ app.use((request, response) =>{
     .json(ERROR)
 })
 
-//500
+500
 app.use((error, request, response, next) => {
 
   response
@@ -40,7 +47,5 @@ app.use((error, request, response, next) => {
   .send('Something broke!');
 });
 
-/**
- * Run and listen the server on an specific port.
- */
+//Run and listen the server on an specific port.
 app.listen(PORT, () => {console.log("Server correct, running in port " + PORT)});
