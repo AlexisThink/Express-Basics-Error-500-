@@ -1,24 +1,25 @@
 /* Import the modules. */
 const express = require('express');
 const morgan = require('morgan');
+const bodyParser = require('body-parser');
 const api = require('./public/routes/api');
 
-/**
- * [1] Create and instantiate the Node server.
- * [2] The callback function will act like a Listener, it will execute each time
- *     a request is done.
- */
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.set('views', __dirname + '/src/views');
-app.set('view engine', 'pug');
-//MILDDWARE
+/*MIDDLEWARE*/
 app.use(morgan('dev'));
 app.use('/static', express.static('public'));
+//TEMPLATE VIEWS, PUG
+app.set('views', __dirname + '/src/views');
+app.set('view engine', 'pug');
+//BODY PARSER
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
+/*-----------------------------------------------------*/
 
-//ROUTES
+/*ROUTES*/
 app.get('/', (request, response) => {
   response.render('main', {
     title: 'LinkedIn REST API',
@@ -26,26 +27,40 @@ app.get('/', (request, response) => {
   })
 });
 
-app.use('/api/v1/', api)
+app.use((request, response, next)=>{
+  response.header('Access-Crontrol-Allow-Origin','*');
+  response.header('Access-Crontrol-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
 
-//404
-app.use((request, response) =>{
-  const ERROR = {
+  next();
+});
+
+app.options('*', (request, response, next) =>{
+  response.header('Acces-Controll-Allow-Methods', 'GET, POST, PUT, DELETE');
+  response.send(200);
+  next();
+})
+//ENDPOINT OF API
+app.use('/api/v1/', api);
+
+/*-----------------------------------------------------*/
+
+//ERROR 404 | NOT FOUND
+app.use((request, response,) =>{
+  const error = {
     message: '404. Not Found'
   };
 
   response
     .status(404)
-    .json(ERROR)
+    .json(error)
 })
 
-500
+//ERROR 500 | THE SERVER CANT RESPONSE
 app.use((error, request, response, next) => {
-
   response
   .status(500)
   .send('Something broke!');
 });
 
-//Run and listen the server on an specific port.
+//RUN SERVICE IN ESPECIFIC PORT AND A MESSAGE TO NOTIFY
 app.listen(PORT, () => {console.log("Server correct, running in port " + PORT)});

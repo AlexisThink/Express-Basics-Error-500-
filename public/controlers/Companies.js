@@ -26,10 +26,40 @@ const Controller = {
           message: 'Not Company Found'
         })
       }
+    },
+
+    tryPost:(request, response) =>{
+      response
+        .status(200)
+        .json({
+          mess: "Hola desde Post",
+          data: request.body
+        })
+    },
+
+    tryPut:(request, response) =>{
+      response
+        .status(200)
+        .json({
+          mess: "Hola desde Put",
+          data: request.body
+        })        
+    },
+
+    tryDelete:(request, response) =>{
+      response
+        .status(200)
+        .json({
+          mess: "Hola desde Delete",
+          data: request.body
+        })      
     }
+
+
 }
 
 module.exports = Controller;
 
-// interfaz grafica para testear
-// diferentes peticiones (delete post y put)
+// FRAMEWORK TO TEST REQUEST
+// REQUEST (DELETE, PUT, POST)
+// CORS

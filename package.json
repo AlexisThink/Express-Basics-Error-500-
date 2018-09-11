@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/muktekguest/linkedin#readme",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "chalk": "^2.4.1",
     "express": "^4.16.3",
     "pug": "^2.0.3"
