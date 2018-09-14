@@ -1,65 +1,109 @@
-const companies = require('../../companies.json');
+const mongoose = require('mongoose');
+const Company = require('../models/Company');
 
 const Controller = {
-    index: (request, response) =>{
-      response
-        .status(200)
-        .json({
-            companies
-          });
-        },
 
-    getById: (request, response) =>{
-      const theCompany = companies.data.filter(company => {
-        return company.id === parseInt(request.params.companyID)
-      });
-
-      if(theCompany.length){
+//SEE ALL INFORMATION
+  index: (request, response) =>{
+    Company
+      .find()
+      .exec()
+      .then(data => {
         response
           .status(200)
           .json({
-            data: theCompany[0]
+            companies: data
           })
-      } else {
-        response
+      }
+    )
+  },
+
+//VIEW ONLY THE COINCIDENS OF THE ID
+  getById: (request, response) =>{
+    Company
+    .findById(request.params.companyID)
+    .then(data => {
+      response
+        .status(200)
         .json({
-          message: 'Not Company Found'
+          type: 'Company Found',
+          data: data
+        })
+    })
+
+    .catch(error => {
+      response
+        .status(500)
+        .json({
+            message: error
         })
       }
-    },
+    );
+  },
 
-    tryPost:(request, response) =>{
+//ADD NEW INFO TO THE DB
+  tryPost:(request, response) =>{
+    const newCompany = new Company({
+      _id: new mongoose.Types.ObjectId(),
+      name: request.body.name
+    });
+
+    newCompany
+      .save()
+      .then(data =>{
+        response
+          .status(201)
+          .json({
+            data
+          })
+      })
+
+      .catch(error => {
+        response
+          .status(500)
+          .json({
+            message: error
+          })
+      });
+
+    console.log('raw record: ', newCompany)
+  },
+
+//UPDATE A VALUE
+  tryPut:(request, response) =>{
+    Company
+    .findByIdAndUpdate(request.params.companyID, request.body, {new: true})
+    .then(data => {
       response
         .status(200)
         .json({
-          mess: "Hola desde Post",
-          data: request.body
+            type: 'Company Updated',
+            data: data
         })
-    },
+    })
+    .catch(error => {
+        console.log(`caught the error: ${error}`);
+        return res.status(500).json(error);
+    });
+  },
 
-    tryPut:(request, response) =>{
-      response
-        .status(200)
-        .json({
-          mess: "Hola desde Put",
-          data: request.body
-        })        
-    },
+//DELETE ELEMENT  
+  tryDelete:(request, response) =>{
+    Company
+      .findByIdAndRemove(request.params.companyID)
+      .then(data => {
+        response
+          .status(200)
+          .json({
+              type: 'Company Deleted',
+              data: data
+          })
+      })
 
-    tryDelete:(request, response) =>{
-      response
-        .status(200)
-        .json({
-          mess: "Hola desde Delete",
-          data: request.body
-        })      
-    }
-
-
+      .catch(err => {
+        console.log(`caught the error: ${err}`);
+        return res.status(500).json(err);
+    });      
+  }
 }
-
 module.exports = Controller;
-
-// FRAMEWORK TO TEST REQUEST
-// REQUEST (DELETE, PUT, POST)
-// CORS

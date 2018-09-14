@@ -3,9 +3,14 @@ const express = require('express');
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const api = require('./public/routes/api');
+const mongoose = require('mongoose');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+mongoose.connect(process.env.MONGODB_URI,{useNewUrlParser: true});
+mongoose.connection.on('connected', () =>{console.log('Succesful Connected to Mongo')});
 
 /*MIDDLEWARE*/
 app.use(morgan('dev'));
