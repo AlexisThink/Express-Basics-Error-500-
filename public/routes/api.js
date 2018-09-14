@@ -13,13 +13,9 @@ app.delete('/api/companies/:companyID', Companies.tryDelete);
 
 //ENDPOINT JOBS
 app.get('/api/jobs', Jobs.index);
-app.get('/api/jobs/:jobID', getByID);
+app.get('/api/jobs/:jobID', Jobs.getByID);
 app.post('/api/jobs', Jobs.create);
 app.put('/api/jobs/:jobID', Jobs.update)
 app.delete('/api/jobs/:jobID', Jobs.remove);
-
-
-
-
 
 module.exports = app;
