@@ -32,10 +32,10 @@ app.get('/', (request, response) => {
   })
 });
 
-app.use((request, response, next)=>{
+//CORS
+app.use((request, response, next) =>{
   response.header('Access-Crontrol-Allow-Origin','*');
   response.header('Access-Crontrol-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-
   next();
 });
 
@@ -44,6 +44,7 @@ app.options('*', (request, response, next) =>{
   response.send(200);
   next();
 })
+
 //ENDPOINT OF API
 app.use('/api/v1/', api);
 
